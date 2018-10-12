@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
 
-public class Penant {
+public class Pennant {
 
     private TeamDataDAO teamDataDAO;
 
@@ -44,12 +44,12 @@ public class Penant {
     private String args[];
 
     public static void main(String args[]) throws Exception {
-        Penant penant = new Penant(args);
-        penant.init();
-        penant.run();
+        Pennant pennant = new Pennant(args);
+        pennant.init();
+        pennant.run();
     }
 
-    Penant(String args[]) {
+    Pennant(String args[]) {
         this.args = args;
     }
 
