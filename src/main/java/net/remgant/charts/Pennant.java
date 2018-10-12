@@ -12,10 +12,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
-import javax.media.jai.JAI;
+import javax.imageio.ImageIO;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -94,7 +93,7 @@ public class Pennant {
             Rectangle2D.Double shape = new Rectangle2D.Double(-2.0, -2.0, 4.0, 4.0);
             for (int i = 0; i < dataset.getSeriesCount(); i++) {
                 renderer.setSeriesShape(i, shape);
-                renderer.setSeriesShapesVisible(i,true);
+                renderer.setSeriesShapesVisible(i, true);
                 renderer.setSeriesShapesFilled(i, true);
             }
             DateAxis axis = (DateAxis) plot.getDomainAxis();
@@ -102,21 +101,17 @@ public class Pennant {
             axis.setVerticalTickLabels(true);
 
             BufferedImage image = chart.createBufferedImage(800, 600);
-            ParameterBlock parameterBlock = new ParameterBlock();
             String outFileName = String.format("%s%d.png", divisionData.getFileName(), currentYear);
             File imageFile = new File(outFileName);
-            parameterBlock.add(imageFile.getCanonicalPath());
-            parameterBlock.add("PNG");
-            parameterBlock.addSource(image);
-            JAI.create("filestore", parameterBlock);
+            ImageIO.write(image, "png", imageFile);
         }
     }
 
     private TimeSeries readTeamFile(TeamData teamData, int currentYear) {
         TimeSeries timeSeries = new TimeSeries(teamData.getName());
-        List<Standings> standings = teamDataDAO.getStandingsForTeamAndYear(teamData.getAbbrev2(),currentYear);
+        List<Standings> standings = teamDataDAO.getStandingsForTeamAndYear(teamData.getAbbrev2(), currentYear);
         for (Standings s : standings) {
-            timeSeries.addOrUpdate(new Day(s.getDate().getDayOfMonth(),s.getDate().getMonthValue(),s.getDate().getYear()),s.getWins()-s.getLosses());
+            timeSeries.addOrUpdate(new Day(s.getDate().getDayOfMonth(), s.getDate().getMonthValue(), s.getDate().getYear()), s.getWins() - s.getLosses());
         }
         return timeSeries;
     }
