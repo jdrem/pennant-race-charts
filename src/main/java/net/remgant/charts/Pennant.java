@@ -86,16 +86,17 @@ public class Pennant {
             XYPlot plot = (XYPlot) chart.getPlot();
 
             XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-            renderer.setBaseShapesVisible(true);
-            renderer.setBaseShapesFilled(true);
             int j = 0;
             for (String teamName : divisionData.getMembers()) {
                 TeamData teamData = teamDataDAO.getTeamData(teamName, currentYear);
                 renderer.setSeriesPaint(j++, teamData.getColor());
             }
             Rectangle2D.Double shape = new Rectangle2D.Double(-2.0, -2.0, 4.0, 4.0);
-            for (int i = 0; i < dataset.getSeriesCount(); i++)
+            for (int i = 0; i < dataset.getSeriesCount(); i++) {
                 renderer.setSeriesShape(i, shape);
+                renderer.setSeriesShapesVisible(i,true);
+                renderer.setSeriesShapesFilled(i, true);
+            }
             DateAxis axis = (DateAxis) plot.getDomainAxis();
             axis.setDateFormatOverride(new SimpleDateFormat("MMM d"));
             axis.setVerticalTickLabels(true);
