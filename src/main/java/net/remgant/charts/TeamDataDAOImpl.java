@@ -123,7 +123,7 @@ public class TeamDataDAOImpl implements TeamDataDAO {
         */
     @Override
     public void loadDataForYear(int year) {
-        String dataFileLocation = System.getProperty("data.file.location", "./src/main/resources");
+        String dataFileLocation = System.getProperty("data.file.location", "./gamelogs");
 
         FileSystem fileSystem = FileSystems.getDefault();
         Path path = fileSystem.getPath(dataFileLocation, String.format("GL%d.TXT", year));
