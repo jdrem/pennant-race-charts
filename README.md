@@ -8,9 +8,9 @@ y-axis:
 #### Building
 Build using Maven:
 
-'''
+```
 mvn clean install copyDependencies
-'''
+```
 
 All the depdencies are in Maven Central
 
@@ -23,9 +23,9 @@ is in the gamelogs sub directory of the project.
 
 Run the script with the year and optinally leagues or divisions you wnat:
 
-'''
+```
 runPennantRaceCharts.sh Year [Division]...
-'''
+```
 
 Divisions/Leagues can be AL, NL, ALE, ALC, ALW, NLE, NLC, NLW.  Note
 that NL and AL only work for 1968, before divisions were created.
