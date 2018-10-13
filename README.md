@@ -9,7 +9,7 @@ y-axis:
 Build using Maven:
 
 ```
-mvn clean install copyDependencies
+mvn clean install  dependency:copy-dependencies
 ```
 
 All the depdencies are in Maven Central
