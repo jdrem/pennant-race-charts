@@ -8,6 +8,11 @@
     <artifactId>PenantRaceCharts</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+            <spring.version>5.0.1.RELEASE</spring.version>
+            <slf4j.version>1.7.25</slf4j.version>
+        </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jfree</groupId>
@@ -22,7 +27,28 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>5.0.1.RELEASE</version>
+            <version>${spring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.9</version>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
