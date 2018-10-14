@@ -1,3 +1,6 @@
+--  The information used here was obtained free of
+--  charge from and is copyrighted by Retrosheet.  Interested
+--  parties may contact Retrosheet at "www.retrosheet.org".
 insert into teams values('ANA','L','AL',NULL,'Los Angeles','Angels',NULL,'1961-04-11','1965-09-01');
 insert into teams values('ANA','CAL','AL',NULL,'California','Angels',NULL,'1965-09-02','1968-09-29');
 insert into teams values('ANA','CAL','AL','W','California','Angels',NULL,'1969-04-08','1996-09-29');

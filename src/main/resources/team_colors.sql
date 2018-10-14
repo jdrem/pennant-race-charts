@@ -1,4 +1,15 @@
-insert into team_colors (abbrev,r,g,b) values('CHN',0,0,0);
+--   Copyright (C) 2018 Jeffrey D. Remillard <jdr@remgant.net>
+--
+--   This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+--   License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
+--   later version.
+--
+--   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+--   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+--
+--   You should have received a copy of the GNU General Public License along with this program. If not,
+--   see <https://www.gnu.org/licenses/>.
+insert into team_colors (abbrev,r,g,b) values('CHA',0,0,0);
 insert into team_colors (abbrev,r,g,b) values('MIN',5,37,98);
 insert into team_colors (abbrev,r,g,b) values('CLE',204,0,1);
 insert into team_colors (abbrev,r,g,b) values('KCA',24,30,166);
@@ -12,7 +23,7 @@ insert into team_colors (abbrev,r,g,b) values('ANA',185,0,32);
 insert into team_colors (abbrev,r,g,b) values('TEX',6,56,125);
 insert into team_colors (abbrev,r,g,b) values('OAK',3,71,58);
 insert into team_colors (abbrev,r,g,b) values('SEA',1,92,93);
-insert into team_colors (abbrev,r,g,b) values('CHA',15,51,135);
+insert into team_colors (abbrev,r,g,b) values('CHN',15,51,135);
 insert into team_colors (abbrev,r,g,b) values('MIL',182,147,47);
 insert into team_colors (abbrev,r,g,b) values('HOU',149,50,44);
 insert into team_colors (abbrev,r,g,b) values('SLN',205,26,68);
