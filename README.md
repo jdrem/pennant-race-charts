@@ -32,7 +32,7 @@ runPennantRaceCharts.sh 1978 ALE,ALW
 ```
 * Run the script with the year and a comma separted list of team names. You must specify a title and file name:
 ```
-runPennantRaceCharts.sh 2021 BOS,NYA,TOR,SEA --title="AL Wildcard" --file.name=al_wildcard_]
+runPennantRaceCharts.sh 2021 BOS,NYA,TOR,SEA --title="AL Wildcard" --file.name=al_wildcard_
 ```
 
 Divisions/Leagues can be AL, NL, ALE, ALC, ALW, NLE, NLC, NLW.  NL and AL only work for 1968 and earlier, before divisions 
