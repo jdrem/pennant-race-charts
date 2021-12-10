@@ -37,5 +37,7 @@ create table team_colors (
 
 create table leagues (
   short_name varchar(3),
-  long_name varchar(32)
+  long_name varchar(32),
+  start int not null,
+  end int
 )

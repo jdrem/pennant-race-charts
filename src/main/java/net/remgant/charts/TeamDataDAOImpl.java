@@ -27,20 +27,20 @@ import java.nio.file.Path;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
 public class TeamDataDAOImpl implements TeamDataDAO {
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     TeamDataDAOImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private static Map<String, String> longNameMap;
-    private static Map<String, String> fileNameMap;
+    private static final Map<String, String> longNameMap;
+    private static final Map<String, String> fileNameMap;
 
     static {
         longNameMap = new HashMap<>();
@@ -65,12 +65,15 @@ public class TeamDataDAOImpl implements TeamDataDAO {
     }
 
     @Override
-    public List<DivisionData> getDivisionDataForYear(int year) {
+    public List<DivisionData> getDivisionDataForYear(int year, Set<String> divisionsToChart) {
         Date date = Date.valueOf(LocalDate.of(year, 7, 1));
         List<DivisionData> returnList = new ArrayList<>();
         List<Map<String, Object>> divisionList = jdbcTemplate.queryForList("select distinct league,division from teams where ? > start_date and (? < end_date or end_date is null)", date, date);
+
         for (Map<String, Object> div : divisionList) {
             String shortName = div.get("LEAGUE").toString() + (div.get("DIVISION") != null ? div.get("DIVISION").toString() : "");
+            if (!divisionsToChart.isEmpty() && !divisionsToChart.contains(shortName))
+                continue;
             String longName = longNameMap.get(shortName);
             String fileName = fileNameMap.get(shortName);
             List<String> members = new ArrayList<>();
@@ -79,10 +82,10 @@ public class TeamDataDAOImpl implements TeamDataDAO {
                 teams = jdbcTemplate.queryForList("select abbrev from teams where league = ? and division = ? and ? > start_date and (? < end_date or end_date is null)", div.get("LEAGUE").toString(), div.get("DIVISION").toString(), date, date);
             else
                 teams = jdbcTemplate.queryForList("select abbrev from teams where league = ? and division is null and ? > start_date and (? < end_date or end_date is null)", div.get("LEAGUE").toString(), date, date);
-            for (Map t : teams) {
+            for (Map<String,Object> t : teams) {
                 members.add(t.get("ABBREV").toString());
             }
-            returnList.add(new DivisionData(longName, shortName, fileName, members));
+            returnList.add(new DivisionData(longName, fileName, members));
         }
         return returnList;
     }
@@ -100,7 +103,7 @@ public class TeamDataDAOImpl implements TeamDataDAO {
 
     @Override
     public List<Standings> getStandingsForTeamAndYear(String abbrev, int year) {
-        List<Map<String, Object>> l = jdbcTemplate.queryForList("select game_date,wins,losses from game_results where team = ? and game_date >= ? and game_date <= ? order by game_date asc",
+        List<Map<String, Object>> l = jdbcTemplate.queryForList("select game_date,wins,losses from game_results where team = ? and game_date >= ? and game_date <= ? order by game_date",
                 abbrev, Date.valueOf(LocalDate.of(year, 1, 1)), Date.valueOf(LocalDate.of(year, 12, 31)));
         return l.stream().map(g -> new Standings(((Date) g.get("GAME_DATE")).toLocalDate(), (Integer) g.get("WINS"), (Integer) g.get("LOSSES")))
                 .collect(Collectors.toList());
@@ -143,13 +146,13 @@ public class TeamDataDAOImpl implements TeamDataDAO {
         Path path = fileSystem.getPath(dataFileLocation, String.format("GL%d.TXT", year));
         try {
             Files.lines(path).forEach(s -> {
-                String t[] = s.split(",");
+                String[] t = s.split(",");
                 LocalDate date = LocalDate.parse(trimQuotes(t[0]), DateTimeFormatter.BASIC_ISO_DATE);
                 int vruns = Integer.parseInt(t[9]);
                 int hruns = Integer.parseInt(t[10]);
 
-                String teams[] = new String[]{trimQuotes(t[3]), trimQuotes(t[6])};
-                boolean results[] = new boolean[]{vruns > hruns, hruns > vruns};
+                String[] teams = new String[]{trimQuotes(t[3]), trimQuotes(t[6])};
+                boolean[] results = new boolean[]{vruns > hruns, hruns > vruns};
                 for (int i = 0; i < 2; i++) {
                     Map<String, Object> m;
                     try {

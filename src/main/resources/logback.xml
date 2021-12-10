@@ -5,8 +5,8 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-
-    <root level="error" additivity="false">
+    <logger name="org.springframework" level="OFF"/>
+    <root level="warn" additivity="false">
         <appender-ref ref="STDOUT"/>
     </root>
 
