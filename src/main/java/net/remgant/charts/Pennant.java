@@ -73,7 +73,7 @@ public class Pennant {
         List<String> divisionsToChart = new ArrayList<>();
         int idx = 1;
         if (args.length > 1 && !args[1].equals("ALL")) {
-            while (Pattern.matches("[AN]L[ECW]", args[idx]) && idx < args.length) {
+            while ( idx < args.length && Pattern.matches("[AN]L[ECW]", args[idx])) {
                 divisionsToChart.add(args[idx++]);
             }
         }
