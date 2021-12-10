@@ -15,10 +15,11 @@
 package net.remgant.charts;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TeamDataDAO {
 
-    List<DivisionData> getDivisionDataForYear(int year);
+    List<DivisionData> getDivisionDataForYear(int year, Set<String> divisionsToChart);
     TeamData getTeamData(String abbrev, int year);
     List<Standings> getStandingsForTeamAndYear(String abbrev, int year);
     void loadDataForYear(int year);

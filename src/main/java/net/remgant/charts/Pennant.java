@@ -22,6 +22,10 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -34,11 +38,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
-
-public class Pennant {
+@SpringBootApplication
+public class Pennant  implements CommandLineRunner {
 
     private TeamDataDAO teamDataDAO;
 
@@ -54,33 +57,35 @@ public class Pennant {
         teamDataDAO = new TeamDataDAOImpl(new JdbcTemplate(db));
     }
 
-    private String args[];
-
-    public static void main(String args[]) throws Exception {
-        Pennant pennant = new Pennant(args);
-        pennant.init();
-        pennant.run();
+    public static void main(String[] args) {
+        SpringApplication.run(Pennant.class, args);
     }
 
-    Pennant(String args[]) {
-        this.args = args;
-    }
+    @Value("${file.name:}")
+    private String fileName;
+    @Value("${title:}")
+    private String chartTitle;
 
-
-    private void run() throws Exception {
+    @Override
+    public void run(String... args) throws Exception {
+        init();
         int currentYear = Integer.parseInt(args[0]);
         teamDataDAO.loadDataForYear(currentYear);
-        List<String> divisionsToChart = new ArrayList<>();
-        int idx = 1;
-        if (args.length > 1 && !args[1].equals("ALL")) {
-            while (Pattern.matches("[AN]L[ECW]", args[idx]) && idx < args.length) {
-                divisionsToChart.add(args[idx++]);
-            }
+
+        // Args can be:
+        // nothing (implies ALL)
+        // ALL
+        // a lit of divisions/leagues. E.g. ALE,NLE,NLC
+        // a list of team names: BOS,NYY,TMP
+        List<DivisionData> divisions;
+        if (args.length <= 1 || args[1].equals("ALL"))
+            divisions = teamDataDAO.getDivisionDataForYear(currentYear, Collections.emptySet());
+        else if (Pattern.matches("([AN]L[ECW]?(,|$))+",args[1])) {
+            divisions = teamDataDAO.getDivisionDataForYear(currentYear, new HashSet<>(Arrays.asList(args[1].split(","))));
+        } else {
+            divisions = Collections.singletonList(new DivisionData(chartTitle, fileName, Arrays.asList(args[1].split(","))));
         }
-        Map<String, DivisionData> divisions = teamDataDAO.getDivisionDataForYear(currentYear).stream()
-                .filter(d -> divisionsToChart.isEmpty() || divisionsToChart.contains(d.getShortName()))
-                .collect(Collectors.toMap(DivisionData::getShortName, d -> d));
-        for (DivisionData divisionData : divisions.values()) {
+        for (DivisionData divisionData : divisions) {
             TimeSeriesCollection dataset = new TimeSeriesCollection();
             for (String teamName : divisionData.getMembers()) {
                 TeamData teamData = teamDataDAO.getTeamData(teamName, currentYear);

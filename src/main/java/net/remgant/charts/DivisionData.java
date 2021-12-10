@@ -18,20 +18,14 @@ import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 public class DivisionData {
-    private String longName;
-    private String fileName;
-    private String shortName;
-    private List<String> members;
+    private final String longName;
+    private final String fileName;
+    private final List<String> members;
 
-    public DivisionData(String longName,  String shortName, String fileName, List<String> members) {
+    public DivisionData(String longName, String fileName, List<String> members) {
         this.longName = longName;
         this.fileName = fileName;
-        this.shortName = shortName;
         this.members = members;
-    }
-
-    public String getShortName() {
-        return shortName;
     }
 
     public String getLongName() {
