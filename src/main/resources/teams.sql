@@ -1,6 +1,9 @@
 --  The information used here was obtained free of
 --  charge from and is copyrighted by Retrosheet.  Interested
 --  parties may contact Retrosheet at "www.retrosheet.org".
+--
+-- Source: https://www.retrosheet.org/CurrentNames.csv
+--
 insert into teams values('ANA','L','AL',NULL,'Los Angeles','Angels',NULL,'1961-04-11','1965-09-01');
 insert into teams values('ANA','CAL','AL',NULL,'California','Angels',NULL,'1965-09-02','1968-09-29');
 insert into teams values('ANA','CAL','AL','W','California','Angels',NULL,'1969-04-08','1996-09-29');
@@ -48,7 +51,8 @@ insert into teams values('CLE','CLE','AL',NULL,'Cleveland','Broncos',NULL,'1902-
 insert into teams values('CLE','CLE','AL',NULL,'Cleveland','Naps',NULL,'1903-04-22','1914-10-04');
 insert into teams values('CLE','CLE','AL',NULL,'Cleveland','Indians',NULL,'1915-04-14','1968-09-27');
 insert into teams values('CLE','CLE','AL','E','Cleveland','Indians',NULL,'1969-04-08','1993-10-03');
-insert into teams values('CLE','CLE','AL','C','Cleveland','Indians',NULL,'1994-04-04',NULL);
+insert into teams values('CLE','CLE','AL','C','Cleveland','Indians',NULL,'1994-04-04','2021-11-02');
+insert into teams values('CLE','CLE','AL','C','Cleveland','Guardians',NULL,'2022-04-07',NULL);
 insert into teams values('COL','COL','NL','W','Colorado','Rockies',NULL,'1993-04-05',NULL);
 insert into teams values('DET','DET','AL',NULL,'Detroit','Tigers',NULL,'1901-04-25','1968-09-29');
 insert into teams values('DET','DET','AL','E','Detroit','Tigers',NULL,'1969-04-08','1997-09-28');
