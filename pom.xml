@@ -6,7 +6,7 @@
 
     <groupId>net.remgant</groupId>
     <artifactId>PenantRaceCharts</artifactId>
-    <version>1.2.0</version>
+    <version>1.3-SNAPSHOT</version>
 
     <properties>
         <spring.version>5.3.13</spring.version>
