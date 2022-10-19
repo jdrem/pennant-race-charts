@@ -23,14 +23,11 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
+import javax.sql.DataSource;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -39,26 +36,13 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
-@SpringBootApplication
-public class Pennant  implements CommandLineRunner {
+@Component("Pennant")
+public class Pennant  extends CommandLineApplication {
 
-    private TeamDataDAO teamDataDAO;
+    private final TeamDataDAO teamDataDAO;
 
-    void init() {
-        EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-                .generateUniqueName(true)
-                .setType(HSQL)
-                .setScriptEncoding("UTF-8")
-                .ignoreFailedDrops(true)
-                .addScript("schema.sql")
-                .addScripts("teams.sql", "team_colors.sql", "leagues.sql")
-                .build();
-        teamDataDAO = new TeamDataDAOImpl(new JdbcTemplate(db));
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(Pennant.class, args);
+    public Pennant(DataSource dataSource) {
+        teamDataDAO = new TeamDataDAOImpl(new JdbcTemplate(dataSource));
     }
 
     @Value("${file.name:}")
@@ -68,10 +52,7 @@ public class Pennant  implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        init();
         int currentYear = Integer.parseInt(args[0]);
-        teamDataDAO.loadDataForYear(currentYear);
-
         // Args can be:
         // nothing (implies ALL)
         // ALL

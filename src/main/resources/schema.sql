@@ -9,7 +9,7 @@
 --
 --   You should have received a copy of the GNU General Public License along with this program. If not,
 --   see <https://www.gnu.org/licenses/>.
-create table teams (
+create cached table if not exists teams (
   abbrev char(3),
   abbrev2 char(3),
   league char(2),
@@ -21,21 +21,31 @@ create table teams (
   end_date date
 );
 
-create table game_results (
+create cached table if not exists game_results (
   game_date date,
   team char(3),
   wins int,
   losses int
 ) ;
 
-create table team_colors (
+create cached table if not exists games (
+    game_id char(12) unique,
+    game_date date,
+    game_number char(1),
+    home_team char(3),
+    home_runs integer,
+    away_team char(3),
+    away_runs integer
+);
+
+create cached table if not exists team_colors (
   abbrev char(3),
   r int,
   g int,
   b int
 );
 
-create table leagues (
+create cached table if not exists leagues (
   short_name varchar(3),
   long_name varchar(32),
   start int not null,

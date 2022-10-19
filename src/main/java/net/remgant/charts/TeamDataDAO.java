@@ -22,5 +22,6 @@ public interface TeamDataDAO {
     List<DivisionData> getDivisionDataForYear(int year, Set<String> divisionsToChart);
     TeamData getTeamData(String abbrev, int year);
     List<Standings> getStandingsForTeamAndYear(String abbrev, int year);
+    @Deprecated
     void loadDataForYear(int year);
 }

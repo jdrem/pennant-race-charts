@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
@@ -103,9 +104,22 @@ public class TeamDataDAOImpl implements TeamDataDAO {
 
     @Override
     public List<Standings> getStandingsForTeamAndYear(String abbrev, int year) {
-        List<Map<String, Object>> l = jdbcTemplate.queryForList("select game_date,wins,losses from game_results where team = ? and game_date >= ? and game_date <= ? order by game_date",
-                abbrev, Date.valueOf(LocalDate.of(year, 1, 1)), Date.valueOf(LocalDate.of(year, 12, 31)));
-        return l.stream().map(g -> new Standings(((Date) g.get("GAME_DATE")).toLocalDate(), (Integer) g.get("WINS"), (Integer) g.get("LOSSES")))
+        List<Map<String,Object>> m = jdbcTemplate.queryForList("select * from games where (home_team = ? or away_team = ?) and " +
+                "game_date >= ? and game_date <= ?  order by game_date, game_number",
+                abbrev, abbrev, Date.valueOf(LocalDate.of(year, 1, 1)), Date.valueOf(LocalDate.of(year, 12, 31)));
+        AtomicInteger wins = new AtomicInteger(0);
+        AtomicInteger losses = new AtomicInteger(0);
+        return m.stream().map(g -> {
+            String homeTeam = g.get("HOME_TEAM").toString();
+            String awayTeam = g.get("AWAY_TEAM").toString();
+            int hr = (int)g.get("HOME_RUNS");
+            int vr = (int)g.get("AWAY_RUNS");
+            if ((homeTeam.equals(abbrev) && hr > vr) || (awayTeam.equals(abbrev) && vr > hr))
+                wins.incrementAndGet();
+            else
+                losses.incrementAndGet();
+            return new Standings(((Date)g.get("GAME_DATE")).toLocalDate(), wins.get(), losses.get());
+        })
                 .collect(Collectors.toList());
     }
 
