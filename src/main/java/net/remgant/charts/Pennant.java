@@ -54,7 +54,12 @@ public class Pennant  implements CommandLineRunner {
                 .addScript("schema.sql")
                 .addScripts("teams.sql", "team_colors.sql", "leagues.sql")
                 .build();
-        teamDataDAO = new TeamDataDAOImpl(new JdbcTemplate(db));
+        if (dataSourceType.equals("retrosheet"))
+            teamDataDAO = new RetroSheetTeamDataDAOImpl(new JdbcTemplate(db));
+        else if (dataSourceType.equals("mlbapi"))
+            teamDataDAO = new MlbApiTeamDataDAOImpl(new JdbcTemplate(db));
+        else
+            throw new RuntimeException("Unkown data source type: "+dataSourceType);
     }
 
     public static void main(String[] args) {
@@ -65,6 +70,8 @@ public class Pennant  implements CommandLineRunner {
     private String fileName;
     @Value("${title:}")
     private String chartTitle;
+    @Value("${data.source.type:retrosheet}")
+    private String dataSourceType;
 
     @Override
     public void run(String... args) throws Exception {
