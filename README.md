@@ -1,41 +1,50 @@
-### Pennat Race Chart Generator
+### Pennant Race Chart Generator
 This program generates pennant race charts for Major League Baseball seasons.
-The chart displays games aboe .500 in the y-axis and the date in the
+The chart displays games above .500 in the y-axis and the date in the
 y-axis:
 
 ![AL East 1978](images/al_east_1978.png)
 
 #### Building
-Build using Maven:
+Build using Gradle:
 
 ```
-mvn clean install  dependency:copy-dependencies
+./gradlew clean build copyDependencies
 ```
 
-All the depdencies are in Maven Central
+All the dependencies are in Maven Central
 
 #### Running
 You will need a source of data for the seasons you want to graph. 
-This program uses Retrosheets game logs which are available 
+
+Retrosheet game logs are best for historical seasons. They go back to 1871 and the current year's data is usually 
+available in December. There are available 
 [here](https://www.retrosheet.org/gamelogs/index.html).  Download
-the years you're interested in and unzip them.  The default location
-is in the gamelogs sub directory of the project.  
-                                                                                    
-You can:
-* Run the script with just the year and get all leagues or divisions:
+the years you're interested in and unzip them.
+
+Current data can be downloaded from MLB's API. To get the current year's worth of data:
+```bash
+curl "https://statsapi.mlb.com/api/v1/scedule?sportId=1&startDate=2022-04-07&endDate=2022-10-05" > mlb-2022.json
 ```
+                              
+Place the game data in the gamelogs subdirectory. By default, the program uses data in Retrosheet format. To use
+MLB API data, add "--data.source.type=mlbapi" to the end of the command.
+
+Once you have the data you want, you can:
+* Run the script with just the year and get all leagues or divisions:
+```bash
 runPennantRaceCharts.sh 2021
 ```
 * Run the script with the year and a comma separated list of league or division abbreviations:
-```
+```bash
 runPennantRaceCharts.sh 1978 ALE,ALW
 ```
-* Run the script with the year and a comma separted list of team names. You must specify a title and file name:
-```
-runPennantRaceCharts.sh 2021 BOS,NYA,TOR,SEA --title="AL Wildcard" --file.name=al_wildcard_
+* Run the script with the year and a comma separated list of team names. You must specify a title and file name:
+```bash
+runPennantRaceCharts.sh 2021 BOS,NYA,TOR,SEA --title="AL Wildcard" --file.name=al_wildcard_2021.png
 ```
 
 Divisions/Leagues can be AL, NL, ALE, ALC, ALW, NLE, NLC, NLW.  NL and AL only work for 1968 and earlier, before divisions 
 were created. NLC and ALC work only after 1993 when the central divisions were created.
 
-The charts will written to the top level project directory.
+The charts will be written to the top level project directory.
