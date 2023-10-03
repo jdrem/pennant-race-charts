@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.HSQL;
 @SpringBootApplication
@@ -76,7 +77,8 @@ public class Pennant  implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         init();
-        int currentYear = Integer.parseInt(args[0]);
+        List<String> argList = Arrays.stream(args).filter(a -> !a.startsWith("--")).collect(Collectors.toList());
+        int currentYear = Integer.parseInt(argList.get(0));
         teamDataDAO.loadDataForYear(currentYear);
 
         // Args can be:
@@ -85,12 +87,12 @@ public class Pennant  implements CommandLineRunner {
         // a lit of divisions/leagues. E.g. ALE,NLE,NLC
         // a list of team names: BOS,NYY,TMP
         List<DivisionData> divisions;
-        if (args.length <= 1 || args[1].equals("ALL"))
+        if (argList.isEmpty() || argList.get(1).equals("ALL"))
             divisions = teamDataDAO.getDivisionDataForYear(currentYear, Collections.emptySet());
-        else if (Pattern.matches("([AN]L[ECW]?(,|$))+",args[1])) {
-            divisions = teamDataDAO.getDivisionDataForYear(currentYear, new HashSet<>(Arrays.asList(args[1].split(","))));
+        else if (Pattern.matches("([AN]L[ECW]?(,|$))+",argList.get(1))) {
+            divisions = teamDataDAO.getDivisionDataForYear(currentYear, new HashSet<>(Arrays.asList(argList.get(1).split(","))));
         } else {
-            divisions = Collections.singletonList(new DivisionData(chartTitle, fileName, Arrays.asList(args[1].split(","))));
+            divisions = Collections.singletonList(new DivisionData(chartTitle, fileName, Arrays.asList(argList.get(1).split(","))));
         }
         for (DivisionData divisionData : divisions) {
             TimeSeriesCollection dataset = new TimeSeriesCollection();
@@ -98,7 +100,7 @@ public class Pennant  implements CommandLineRunner {
                 TeamData teamData = teamDataDAO.getTeamData(teamName, currentYear);
                 dataset.addSeries(readTeamFile(teamData, currentYear));
             }
-            String chartName = divisionData.getLongName() + " " + currentYear;
+            String chartName = chartTitle.isEmpty() ? divisionData.getLongName() + " " + currentYear : chartTitle;
             JFreeChart chart = ChartFactory.createTimeSeriesChart(
                     chartName,                     // title
                     "Date",                     // x-axis label
@@ -127,7 +129,7 @@ public class Pennant  implements CommandLineRunner {
             axis.setVerticalTickLabels(true);
 
             BufferedImage image = chart.createBufferedImage(800, 600);
-            String outFileName = String.format("%s%d.png", divisionData.getFileName(), currentYear);
+            String outFileName = fileName.isEmpty() ? String.format("%s%d.png", divisionData.getFileName(), currentYear) : fileName;
             File imageFile = new File(outFileName);
             ImageIO.write(image, "png", imageFile);
         }
