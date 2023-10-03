@@ -54,5 +54,5 @@ publishing {
 
 task copyDependencies(type: Copy) {
     from (sourceSets.main.runtimeClasspath)
-    into('target/dependency')
+    into('build/dependencies')
 }
