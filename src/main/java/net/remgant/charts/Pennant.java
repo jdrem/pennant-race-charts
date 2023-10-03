@@ -26,11 +26,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
 import javax.imageio.ImageIO;
+import javax.sql.DataSource;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -44,10 +45,12 @@ import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.
 @SpringBootApplication
 public class Pennant  implements CommandLineRunner {
 
+    final private DataSource dataSource;
     private TeamDataDAO teamDataDAO;
 
-    void init() {
-        EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
+    @Bean
+    public DataSource dataSource() {
+        return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(HSQL)
                 .setScriptEncoding("UTF-8")
@@ -55,12 +58,10 @@ public class Pennant  implements CommandLineRunner {
                 .addScript("schema.sql")
                 .addScripts("teams.sql", "team_colors.sql", "leagues.sql")
                 .build();
-        if (dataSourceType.equals("retrosheet"))
-            teamDataDAO = new RetroSheetTeamDataDAOImpl(new JdbcTemplate(db));
-        else if (dataSourceType.equals("mlbapi"))
-            teamDataDAO = new MlbApiTeamDataDAOImpl(new JdbcTemplate(db));
-        else
-            throw new RuntimeException("Unkown data source type: "+dataSourceType);
+    }
+
+    public Pennant(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public static void main(String[] args) {
@@ -76,7 +77,12 @@ public class Pennant  implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        init();
+        if (dataSourceType.equals("retrosheet"))
+            teamDataDAO = new RetroSheetTeamDataDAOImpl(new JdbcTemplate(dataSource));
+        else if (dataSourceType.equals("mlbapi"))
+            teamDataDAO = new MlbApiTeamDataDAOImpl(new JdbcTemplate(dataSource));
+        else
+            throw new RuntimeException("Unknown data source type: "+dataSourceType);
         List<String> argList = Arrays.stream(args).filter(a -> !a.startsWith("--")).collect(Collectors.toList());
         int currentYear = Integer.parseInt(argList.get(0));
         teamDataDAO.loadDataForYear(currentYear);
@@ -87,6 +93,7 @@ public class Pennant  implements CommandLineRunner {
         // a lit of divisions/leagues. E.g. ALE,NLE,NLC
         // a list of team names: BOS,NYY,TMP
         List<DivisionData> divisions;
+        //noinspection ConstantValue
         if (argList.isEmpty() || argList.get(1).equals("ALL"))
             divisions = teamDataDAO.getDivisionDataForYear(currentYear, Collections.emptySet());
         else if (Pattern.matches("([AN]L[ECW]?(,|$))+",argList.get(1))) {
