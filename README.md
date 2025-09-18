@@ -24,7 +24,7 @@ the years you're interested in and unzip them.
 
 Current data can be downloaded from MLB's API. To get the current year's worth of data:
 ```bash
-curl "https://statsapi.mlb.com/api/v1/scedule?sportId=1&startDate=2022-04-07&endDate=2022-10-05" > mlb-2022.json
+curl "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2024-03-20&endDate=2024-09-30" > mlb-2024.json
 ```
                               
 Place the game data in the gamelogs subdirectory. By default, the program uses data in Retrosheet format. To use
