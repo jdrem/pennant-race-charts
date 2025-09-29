@@ -26,7 +26,7 @@ public class MlbApiTeamDataDAOImpl extends TeamDataDAOImpl {
         m.put("Philadelphia Phillies","PHI");
         m.put("Atlanta Braves","ATL");
         m.put("Cleveland Guardians","CLE");
-        m.put("Chicago Cubs","CNH");
+        m.put("Chicago Cubs","CHN");
         m.put("Kansas City Royals","KCA");
         m.put("Miami Marlins","MIA");
         m.put("Minnesota Twins","MIN");
